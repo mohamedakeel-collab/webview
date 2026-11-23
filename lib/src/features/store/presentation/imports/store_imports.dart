@@ -25,6 +25,7 @@ import '../../../../core/widgets/buttons/default_button.dart';
 
 // ── Models ───────────────────────────────────────────────────────────
 part '../models/store_tab.dart';
+part '../models/store_menu_item.dart';
 
 // ── Cubits ───────────────────────────────────────────────────────────
 part '../cubits/store_tab_cubit.dart';
@@ -44,3 +45,5 @@ part '../widgets/store_tab_view.dart';
 part '../widgets/store_offline_view.dart';
 part '../widgets/store_splash_view.dart';
 part '../widgets/store_refresh_overlay.dart';
+part '../widgets/store_menu_view.dart';
+part '../widgets/store_menu_tile.dart';

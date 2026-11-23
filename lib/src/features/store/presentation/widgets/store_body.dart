@@ -35,15 +35,22 @@ class _StoreBody extends StatelessWidget {
                     index: current.index,
                     children: [
                       for (final tab in StoreTab.values)
-                        vc.isOpened(tab)
-                            ? _StoreTabView(controller: vc.controllerOf(tab))
-                            : const SizedBox.shrink(),
+                        if (!tab.isWeb)
+                          _StoreMenuView(vc: vc)
+                        else if (vc.isOpened(tab))
+                          _StoreTabView(controller: vc.controllerOf(tab))
+                        else
+                          const SizedBox.shrink(),
                     ],
                   ),
                   _StoreSplashView(visible: !ready),
                 ],
               ),
             ),
+          ),
+          bottomNavigationBar: _StoreBottomBar(
+            current: current,
+            onSelect: (tab) => vc.select(tab, current: current),
           ),
         ),
       ),

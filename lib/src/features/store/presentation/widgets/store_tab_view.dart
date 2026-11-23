@@ -44,8 +44,7 @@ class _StoreTabView extends StatelessWidget {
                   onLoadStop: controller.onLoadStop,
                   onProgressChanged: controller.onProgress,
                   onReceivedError: controller.onReceivedError,
-                  shouldOverrideUrlLoading:
-                      controller.shouldOverrideUrlLoading,
+                  shouldOverrideUrlLoading: controller.shouldOverrideUrlLoading,
                   onCreateWindow: controller.onCreateWindow,
                 ),
                 ValueListenableBuilder<bool>(

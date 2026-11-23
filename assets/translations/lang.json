@@ -79,6 +79,7 @@
   "store_tab_home #$ Home": "الرئيسية",
   "store_tab_offers #$ Offers": "العروض",
   "store_tab_cart #$ Cart": "السلة",
+  "store_tab_menu #$ Menu": "القائمة",
   "store_tab_account #$ Account": "حسابي",
   "store_offline_title #$ You're offline": "لا يوجد اتصال بالإنترنت",
   "store_offline_desc #$ Check your connection and try again": "تحقق من الاتصال وحاول مرة أخرى",

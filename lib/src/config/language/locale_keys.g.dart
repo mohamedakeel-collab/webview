@@ -223,6 +223,9 @@ abstract class LocaleKeys {
   static const String _storeTabCart = 'store_tab_cart';
   static String get storeTabCart => _storeTabCart.tr();
 
+  static const String _storeTabMenu = 'store_tab_menu';
+  static String get storeTabMenu => _storeTabMenu.tr();
+
   static const String _storeTabAccount = 'store_tab_account';
   static String get storeTabAccount => _storeTabAccount.tr();
 

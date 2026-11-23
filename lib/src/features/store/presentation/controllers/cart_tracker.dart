@@ -11,13 +11,9 @@ class CartTracker {
     if (count < 0 || count == _lastCount) return;
 
     if (count == 0) {
-      OneSignal.User.removeTags([
-        'cart_items',
-        'cart_at',
-      ]);
+      OneSignal.User.removeTags(['cart_items', 'cart_at']);
     } else {
-      final timestamp =
-          DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      final timestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
       OneSignal.User.addTags({
         'cart_items': count.toString(),

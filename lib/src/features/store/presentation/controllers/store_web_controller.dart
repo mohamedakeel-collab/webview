@@ -5,12 +5,16 @@ class StoreWebController {
   StoreWebController({
     required this.tab,
     required this.onTabLink,
+    required this.onMenu,
     required this.cartTracker,
   });
 
   final StoreTab tab;
 
   final void Function(StoreTab tab, WebUri url) onTabLink;
+
+  /// Receives the storefront's main menu each time a store page loads.
+  final ValueChanged<List<StoreMenuItem>> onMenu;
 
   final CartTracker cartTracker;
 
@@ -68,9 +72,10 @@ class StoreWebController {
   };
 
   /// The storefront footer advertises "download our app" badges, which
-  /// make no sense once the user is already inside the app.
+  /// make no sense once the user is already inside the app. The header's
+  /// ☰ drawer button is replaced by the native Menu tab.
   static const _injectedCss =
-      '.store-footer__apps { display: none !important; }';
+      '.store-footer__apps, a.mburger { display: none !important; }';
 
   /// The login modal's social buttons live inside Salla's cross-origin
   /// iframe (accounts.salla.com), which page-level CSS can't reach.
@@ -282,6 +287,7 @@ class StoreWebController {
   });
 })();
 ''';
+
   /// Reports when the product sliders near the top have their cards.
   /// Sliders far down the page don't hold the page back, and an empty one
   /// gives up after 8 s instead of keeping the splash up.
@@ -315,6 +321,39 @@ class StoreWebController {
 })();
 ''';
 
+  /// Reads the mobile drawer menu (`#mobile-menu`) of Salla themes into
+  /// `[{title, url, children: [...]}]`. The `!hidden` items are the desktop
+  /// copies of the same sections.
+  static const _menuJs = r'''
+(function () {
+  var root = document.querySelector('#mobile-menu > ul');
+  var bridge = window.flutter_inappwebview;
+  if (!root || !bridge || !bridge.callHandler) return;
+  function text(el) {
+    return el ? el.textContent.replace(/\s+/g, ' ').trim() : '';
+  }
+  var items = [];
+  Array.prototype.forEach.call(root.children, function (li) {
+    if (li.tagName !== 'LI' || li.className.indexOf('!hidden') !== -1) return;
+    var head = li.querySelector(':scope > a, :scope > span');
+    var item = {
+      title: text(head),
+      url: head && head.tagName === 'A' ? head.href : null,
+      children: []
+    };
+    var sub = li.querySelector(':scope > ul');
+    if (sub) {
+      Array.prototype.forEach.call(sub.children, function (child) {
+        var a = child.querySelector(':scope > a');
+        if (a) item.children.push({ title: text(a), url: a.href });
+      });
+    }
+    if (item.title) items.push(item);
+  });
+  if (items.length) bridge.callHandler('StoreMenu', items);
+})();
+''';
+
   static final settings = InAppWebViewSettings(
     useShouldOverrideUrlLoading: true,
     supportMultipleWindows: true,
@@ -331,6 +370,18 @@ class StoreWebController {
     controller.addJavaScriptHandler(
       handlerName: 'StoreReady',
       callback: (_) => _markReady(),
+    );
+
+    controller.addJavaScriptHandler(
+      handlerName: 'StoreMenu',
+      callback: (args) {
+        if (_disposed || args.isEmpty) return null;
+        final raw = args.first;
+        if (raw is! List) return null;
+        final items = raw.whereType<Map>().map(StoreMenuItem.fromJson).toList();
+        if (items.isNotEmpty) onMenu(items);
+        return null;
+      },
     );
 
     controller.addJavaScriptHandler(
@@ -361,17 +412,13 @@ class StoreWebController {
           return null;
         }
 
-        final count = int.tryParse(
-          message['count'].toString(),
-        );
+        final count = int.tryParse(message['count'].toString());
 
         if (count == null || count < 0) return null;
 
         cartTracker.updateCount(count);
 
-        debugPrint(
-          '[FuonkhCart] source=$source, count=$count',
-        );
+        debugPrint('[FuonkhCart] source=$source, count=$count');
 
         return null;
       },
@@ -384,16 +431,14 @@ class StoreWebController {
   }
 
   Future<void> onLoadStop(
-      InAppWebViewController controller,
-      WebUri? url,
-      ) async {
+    InAppWebViewController controller,
+    WebUri? url,
+  ) async {
     if (_disposed) return;
 
     pullToRefresh.endRefreshing();
 
-    await controller.injectCSSCode(
-      source: _injectedCss,
-    );
+    await controller.injectCSSCode(source: _injectedCss);
 
     _loadedUrl = url;
     _cartCountAtLoad = cartTracker.count;
@@ -409,6 +454,7 @@ class StoreWebController {
     if (!isReady.value || isRefreshing.value) {
       await controller.evaluateJavascript(source: _readyJs);
     }
+    await controller.evaluateJavascript(source: _menuJs);
 
     // A finished order empties the cart, but the page after checkout only
     // offers a saved snapshot, which the tracker ignores once a count is
@@ -419,13 +465,9 @@ class StoreWebController {
     }
 
     try {
-      await controller.evaluateJavascript(
-        source: _cartTrackerJs,
-      );
+      await controller.evaluateJavascript(source: _cartTrackerJs);
     } catch (error) {
-      debugPrint(
-        '[FuonkhCart] injection failed: $error',
-      );
+      debugPrint('[FuonkhCart] injection failed: $error');
     }
   }
 
@@ -556,10 +598,9 @@ class StoreWebController {
     _disposed = true;
 
     _readyTimer?.cancel();
-    _web?.removeJavaScriptHandler(
-      handlerName: 'FuonkhCart',
-    );
+    _web?.removeJavaScriptHandler(handlerName: 'FuonkhCart');
     _web?.removeJavaScriptHandler(handlerName: 'StoreReady');
+    _web?.removeJavaScriptHandler(handlerName: 'StoreMenu');
 
     progress.dispose();
     hasError.dispose();

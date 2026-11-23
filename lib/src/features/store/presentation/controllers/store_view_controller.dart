@@ -4,10 +4,11 @@ part of '../imports/store_imports.dart';
 /// and the Android back button.
 class StoreViewController {
   StoreViewController({required this.onSelectTab}) {
-    for (final tab in StoreTab.values) {
+    for (final tab in StoreTab.values.where((tab) => tab.isWeb)) {
       _tabs[tab] = StoreWebController(
         tab: tab,
         onTabLink: _openInTab,
+        onMenu: _setMenu,
         cartTracker: _cartTracker,
       );
     }
@@ -31,6 +32,11 @@ class StoreViewController {
   /// visit, so only the pages the user opens ever load.
   final Set<StoreTab> _opened = {StoreTab.home};
 
+  /// The storefront's main menu, read from whichever page loaded last.
+  final ValueNotifier<List<StoreMenuItem>> menu = ValueNotifier(const []);
+
+  void _setMenu(List<StoreMenuItem> items) => menu.value = items;
+
   StoreWebController controllerOf(StoreTab tab) => _tabs[tab]!;
 
   bool isOpened(StoreTab tab) => _opened.contains(tab);
@@ -38,7 +44,7 @@ class StoreViewController {
   /// Tapping the active tab again takes it back to its root page.
   void select(StoreTab tab, {required StoreTab current}) {
     if (tab == current) {
-      controllerOf(tab).openRoot();
+      if (tab.isWeb) controllerOf(tab).openRoot();
       return;
     }
     _opened.add(tab);
@@ -75,9 +81,15 @@ class StoreViewController {
     controllerOf(tab).open(WebUri.uri(link));
   }
 
+  /// Menu links open in Home, the tab a category page belongs to.
+  void openFromMenu(WebUri url) {
+    onSelectTab(StoreTab.home);
+    controllerOf(StoreTab.home).open(url);
+  }
+
   /// Back walks the WebView history, then returns to Home, then exits.
   Future<void> handleBack(StoreTab current) async {
-    if (await controllerOf(current).goBack()) return;
+    if (current.isWeb && await controllerOf(current).goBack()) return;
     if (current != StoreTab.home) {
       onSelectTab(StoreTab.home);
       return;
@@ -87,6 +99,7 @@ class StoreViewController {
 
   void dispose() {
     _push.pendingLink.removeListener(_openPushLink);
+    menu.dispose();
     for (final controller in _tabs.values) {
       controller.dispose();
     }
