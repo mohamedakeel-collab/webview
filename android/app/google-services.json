@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "494454197608",
+    "project_id": "fuonkh-9c47d",
+    "storage_bucket": "fuonkh-9c47d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:494454197608:android:f4832148169586abb65add",
+        "android_client_info": {
+          "package_name": "com.fuonkh.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiI7EcvCECR8QmKQHMGOVgzjk5fZyfarI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

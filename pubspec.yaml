@@ -1,0 +1,130 @@
+name: webviewtest
+description: "A new Flutter project."
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.5
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+
+  #--------------------- Networks & Firebase -----------------------
+  dio: ^5.7.0
+  crypto: ^3.0.6
+  pretty_dio_logger: ^1.4.0
+  firebase_core: ^4.9.0
+  firebase_remote_config: ^6.5.1
+  #--------------------- Caching (Dio) + Storage (Hive CE) -----------------------
+  dio_cache_interceptor: ^3.5.0
+  hive_ce: ^2.13.1
+  hive_ce_flutter: ^2.3.2
+
+  #--------------------- Connectivity -----------------------
+  connectivity_plus: ^7.1.1
+
+  #--------------------- Localization & Internationalization -----------------------
+  intl: ^0.20.3
+  easy_localization: ^3.0.8
+
+  #--------------------- Tools -----------------------
+  image_picker: ^1.1.2
+  file_picker: ^10.3.1
+  image_cropper: ^12.2.1
+  flutter_html: ^3.0.0
+  video_player: ^2.9.2
+  cached_network_image: ^3.4.1
+  dropdown_search: ^6.0.2
+  flutter_screenutil: ^5.9.3
+  flutter_secure_storage: ^10.2.0
+
+  #--------------------- State Management & Utilities -----------------------
+  equatable: ^2.0.7
+  flutter_bloc: ^9.1.1
+  get_it: ^9.2.1
+  injectable: ^3.0.0
+
+  #--------------------- UI & Animations -----------------------
+  flutter_svg: ^2.1.0
+  lottie: ^3.1.2
+  flutter_animate: ^4.5.2
+  skeletonizer: ^2.1.0
+
+  #--------------------- Storage & Data -----------------------
+  path_provider: ^2.1.4
+
+  #--------------------- Sharing & Links -----------------------
+  share_plus: ^12.0.0
+  url_launcher: ^6.3.0
+
+  #--------------------- Reactive & Utils -----------------------
+  rxdart: ^0.28.0
+  uuid: ^4.5.0
+  dartz: ^0.10.1
+  flutter_inappwebview: 6.2.0-beta.3
+  onesignal_flutter: ^5.8.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.4
+  bloc_test: ^10.0.0
+  build_runner: ^2.4.13
+  flutter_gen_runner: ^5.4.0
+  injectable_generator: ^3.0.0
+  hive_ce_generator: ^1.10.0
+  flutter_lints: ^6.0.0
+  http_mock_adapter: ^0.6.1
+  flutter_launcher_icons: ^0.14.4
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/svg/
+    - assets/svg/base_svg/
+    - assets/svg/app_svg/
+    - assets/fonts/
+    - assets/lottie/
+    - assets/translations/
+
+  fonts:
+    - family: Beiruti
+      fonts:
+        - asset: assets/fonts/Beiruti-ExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/Beiruti-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Beiruti-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Beiruti-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Beiruti-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Beiruti-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Beiruti-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/Beiruti-Black.ttf
+          weight: 900
+
+flutter_gen:
+  output: lib/src/config/res/
+  line_length: 80
+  integrations:
+    lottie: true
+    flutter_svg: true
+  assets:
+    enabled: true
+    outputs:
+      class_name: AppAssets
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: true
+  image_path: "assets/svg/base_svg/app_icon.png"
+  remove_alpha_ios: true
+  adaptive_icon_background: "#5B1E1F"
+  adaptive_icon_foreground: "assets/svg/base_svg/app_icon.png"
+  adaptive_icon_foreground_inset: 16
